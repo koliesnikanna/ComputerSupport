@@ -1,0 +1,175 @@
+---
+title: "Task1Košice"
+author: "Anna Koliesnik"
+date: "29/10/2025"
+format:
+  html:
+    embed-resources: true
+editor: source
+---
+
+## Question 1 Atomic Types
+Question description
+
+Create the following variables related to your chosen object:
+- 4 numeric values (e.g., population, temperature, size, rating)  
+- 3 integer values (e.g., number of moons, buildings, inhabitants)  
+- 2 logical values (e.g., has_water, is_inhabited)  
+- 3 character values (e.g., name, region, category)
+
+```{r}
+# numeric values
+distance_to_bratislava_km <- 400.0   # approx.
+elevation_m <- 206                  # m (approx.)
+area <- 242.8                       # km2 (approx Košice area)
+avg_density <- 880                  # approx people/km2
+
+# integer values
+population <- 240000L
+num_parks <- 25L
+num_schools <- 50L
+
+# character
+name <- "Kosice"
+old_name <- "Cassovia"
+region <- "Košický kraj"
+category <- "Mesto"
+
+# logical
+has_water <- TRUE        # Hornád river
+is_inhabited <- TRUE
+```
+
+
+## Question 2 Vectors
+
+Question description
+Create three different vectors:
+
+```{r}
+
+# 1. Numeric vector
+numeric_vector <- c(population, area)
+numeric_vector
+
+# 2. Sequence vector (from 20 to 100 step 5)
+sequence_vector <- seq(from = 20, to = 100, by = 5)
+sequence_vector
+
+# 3. Logical vector of 10 random TRUE/FALSE 
+set.seed(123)
+logical_vector <- sample(c(TRUE, FALSE), size = 10, replace = TRUE)
+logical_vector
+```
+
+## Question 3 Matrix
+
+```{r}
+set.seed(42)
+
+m <- matrix(
+  sample(-50:50, size = 9, replace = TRUE),
+  nrow = 3, ncol = 3, byrow = TRUE
+)
+
+rownames(m) <- c("Stare_Mesto", "Terasa", "Nad_Jazerom")
+colnames(m) <- c("Traffic", "Greenery", "Water")
+
+m
+
+row_avgs <- rowMeans(m)
+col_avgs <- colMeans(m)
+
+row_avgs
+col_avgs
+```
+
+
+## Question 4 List
+
+```{r}
+kosicelist <- list(
+  description = "Kosice mini-universe: basic facts, vectors for practice, and a city-themed matrix.",
+  
+  scalars = list(
+    population = population,
+    area = area,
+    has_water = has_water,
+    is_inhabited = is_inhabited,
+    name = name,
+    old_name = old_name,
+    region = region,
+    category = category
+  ),
+  
+  vectors = list(
+    numeric = numeric_vector,
+    sequence = sequence_vector,
+    logical = logical_vector
+  ),
+  
+  matrix = m,
+  
+  matrix_stats = list(
+    row_means = row_avgs,
+    col_means = col_avgs
+  )
+)
+
+str(kosicelist)
+```
+
+
+## Question 5 Factor
+
+```{r}
+development_level <- factor(
+  c("medium", "high", "medium", "low", "high", "medium", "low"),
+  levels = c("low", "medium", "high"), ordered = TRUE
+)
+
+table(development_level)
+```
+
+
+## Question 6 Data Frame
+
+```{r}
+kosice_df <- data.frame(
+  district = c("Stare Mesto", "Terasa", "Nad Jazerom", "KVP", "Sever", "Barca"),
+  pop = c(42000, 55000, 25000, 30000, 20000, 12000),
+  has_playground = c(TRUE, TRUE, TRUE, TRUE, FALSE, TRUE),
+  zone = factor(
+    c("mixed", "residential", "residential", "residential", "mixed", "industrial"),
+    levels = c("residential", "mixed", "industrial", "recreational")
+  ),
+  dist_km = c(0.5, 3.0, 6.0, 4.5, 2.0, 7.0)
+)
+
+str(kosice_df)
+summary(kosice_df)
+
+kosice_df$priority <- with(
+  kosice_df,
+  ifelse(pop > 30000 & !has_playground, "high",
+         ifelse(pop > 30000, "medium", "low"))
+)
+
+kosice_df$priority <- factor(kosice_df$priority, levels = c("low", "medium", "high"), ordered = TRUE)
+
+table(kosice_df$zone)
+table(kosice_df$priority)
+kosice_df
+
+write.csv(kosice_df, "kosice_df.csv", row.names = FALSE)
+saveRDS(kosice_df, "kosice_df.rds")
+```
+
+
+```{r}
+## --- Write to files ---
+write.csv(kosice_df, "kosice_df.csv", row.names = FALSE)   # CSV
+saveRDS(kosice_df, "kosice_df.rds")                        # keeps factors/attributes
+
+```
+
