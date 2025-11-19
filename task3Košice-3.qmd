@@ -1,0 +1,349 @@
+---
+title: "Task3Košice"
+author: "Anna Koliesnik"
+date: "06/11/2025"
+format:
+  html:
+    embed-resources: true
+editor: source
+---
+
+## Question 1 Atomic Types
+Question description
+
+Create the following variables related to your chosen object:
+- 4 numeric values (e.g., population, temperature, size, rating)  
+- 3 integer values (e.g., number of moons, buildings, inhabitants)  
+- 2 logical values (e.g., has_water, is_inhabited)  
+- 3 character values (e.g., name, region, category)
+
+```{r}
+# numeric values
+distance_to_bratislava_km <- 400.0   # approx.
+elevation_m <- 206                  # m (approx.)
+area <- 242.8                       # km2 (approx Košice area)
+avg_density <- 880                  # approx people/km2
+
+# integer values
+population <- 240000L
+num_parks <- 25L
+num_schools <- 50L
+
+# character
+name <- "Kosice"
+old_name <- "Cassovia"
+region <- "Košický kraj"
+category <- "Mesto"
+
+# logical
+has_water <- TRUE        # Hornád river
+is_inhabited <- TRUE
+```
+
+
+## Question 2 Vectors
+
+Question description
+Create three different vectors:
+
+```{r}
+
+# 1. Numeric vector
+numeric_vector <- c(population, area)
+numeric_vector
+
+# 2. Sequence vector (from 20 to 100 step 5)
+sequence_vector <- seq(from = 20, to = 100, by = 5)
+sequence_vector
+
+# 3. Logical vector of 10 random TRUE/FALSE 
+set.seed(123)
+logical_vector <- sample(c(TRUE, FALSE), size = 10, replace = TRUE)
+logical_vector
+```
+
+## Question 3 Matrix
+
+```{r}
+set.seed(42)
+
+m <- matrix(
+  sample(-50:50, size = 9, replace = TRUE),
+  nrow = 3, ncol = 3, byrow = TRUE
+)
+
+rownames(m) <- c("Stare_Mesto", "Terasa", "Nad_Jazerom")
+colnames(m) <- c("Traffic", "Greenery", "Water")
+
+m
+
+row_avgs <- rowMeans(m)
+col_avgs <- colMeans(m)
+
+row_avgs
+col_avgs
+```
+
+
+## Question 4 List
+
+```{r}
+kosicelist <- list(
+  description = "Kosice mini-universe: basic facts, vectors for practice, and a city-themed matrix.",
+  
+  scalars = list(
+    population = population,
+    area = area,
+    has_water = has_water,
+    is_inhabited = is_inhabited,
+    name = name,
+    old_name = old_name,
+    region = region,
+    category = category
+  ),
+  
+  vectors = list(
+    numeric = numeric_vector,
+    sequence = sequence_vector,
+    logical = logical_vector
+  ),
+  
+  matrix = m,
+  
+  matrix_stats = list(
+    row_means = row_avgs,
+    col_means = col_avgs
+  )
+)
+
+str(kosicelist)
+```
+
+
+## Question 5 Factor
+
+```{r}
+development_level <- factor(
+  c("medium", "high", "medium", "low", "high", "medium", "low"),
+  levels = c("low", "medium", "high"), ordered = TRUE
+)
+
+table(development_level)
+```
+
+
+## Question 6 Data Frame
+
+```{r}
+kosice_df <- data.frame(
+  district = c("Stare Mesto", "Terasa", "Nad Jazerom", "KVP", "Sever", "Barca"),
+  pop = c(42000, 55000, 25000, 30000, 20000, 12000),
+  has_playground = c(TRUE, TRUE, TRUE, TRUE, FALSE, TRUE),
+  zone = factor(
+    c("mixed", "residential", "residential", "residential", "mixed", "industrial"),
+    levels = c("residential", "mixed", "industrial", "recreational")
+  ),
+  dist_km = c(0.5, 3.0, 6.0, 4.5, 2.0, 7.0)
+)
+
+str(kosice_df)
+summary(kosice_df)
+
+kosice_df$priority <- with(
+  kosice_df,
+  ifelse(pop > 30000 & !has_playground, "high",
+         ifelse(pop > 30000, "medium", "low"))
+)
+
+kosice_df$priority <- factor(kosice_df$priority, levels = c("low", "medium", "high"), ordered = TRUE)
+
+table(kosice_df$zone)
+table(kosice_df$priority)
+kosice_df
+
+write.csv(kosice_df, "kosice_df.csv", row.names = FALSE)
+saveRDS(kosice_df, "kosice_df.rds")
+```
+
+
+```{r}
+## --- Write to files ---
+write.csv(kosice_df, "kosice_df.csv", row.names = FALSE)   # CSV
+saveRDS(kosice_df, "kosice_df.rds")                        # keeps factors/attributes
+
+```
+
+## --- 2.1. Querying Vectors ---
+
+```{r}
+## 2.1.1 Sequence vector: 3rd element; elements 2:5; all > 20
+third_elem <- sequence_vector[3]
+third_elem
+
+elem_2_to_5 <- sequence_vector[2:5]
+elem_2_to_5
+
+greater_than_20 <- sequence_vector[sequence_vector > 20]
+greater_than_20
+```
+
+## 2.1.2 Logical vector: only TRUE values; indices of TRUE via which()
+
+```{r}
+only_true_values <- logical_vector[logical_vector]
+only_true_values
+
+true_indices <- which(logical_vector)
+true_indices
+```
+
+## 2.2. Querying Your "Universe" List 
+
+```{r}
+## description via $
+desc_text <- kosicelist$description
+desc_text
+
+## 3x3 matrix via [[ ]]
+matrix_3x3 <- kosicelist[["matrix"]]
+matrix_3x3
+
+## second element from the numeric vector within the list
+second_from_numeric_vec <- kosicelist$vectors$numeric[2]
+second_from_numeric_vec
+```
+
+## 2.3. Investigating Your Data Frame 
+
+```{r}
+## first 3 rows
+head_three <- head(kosice_df, 3)
+head_three
+
+## value at 4th row, 1st column
+val_4_1 <- kosice_df[4, 1]
+val_4_1
+
+## logical column as a vector (has_playground)
+playground_vec <- kosice_df$has_playground
+playground_vec
+
+## Logical subsetting: pop > 30000 AND has playground
+df_subset <- kosice_df[kosice_df$pop > 30000 & kosice_df$has_playground, ]
+df_subset
+
+## %in% subsetting: keep only selected zones
+df_subset_2 <- kosice_df[kosice_df$zone %in% c("residential", "mixed"), ]
+df_subset_2
+```
+
+## 2.4. Handling "Corrupted" Data (NA) ---
+
+```{r}
+## copy original df
+df_corrupted <- kosice_df
+
+## introduce 3 NAs at specific locations
+df_corrupted[2, "has_playground"] <- NA
+df_corrupted[5, "dist_km"] <- NA
+df_corrupted[6, "pop"] <- NA
+
+## count NAs
+total_NAs <- sum(is.na(df_corrupted))
+total_NAs
+
+NAs_by_col <- colSums(is.na(df_corrupted))
+NAs_by_col
+
+## mean with NA present (example: 'pop')
+mean_pop_with_na <- mean(df_corrupted$pop, na.rm = TRUE)
+mean_pop_with_na
+
+## remove rows with any NA
+df_clean <- na.omit(df_corrupted)
+df_clean
+```
+
+## 2.5. Bonus: which.max / which.min 
+
+```{r}
+## index of the row with the highest population (original df)
+highest_pop_index <- which.max(kosice_df$pop)
+highest_pop_index
+
+## print that row
+kosice_df[highest_pop_index, ]
+
+## also example for min distance
+lowest_dist_index <- which.min(kosice_df$dist_km)
+lowest_dist_index
+kosice_df[lowest_dist_index, ]
+```
+
+
+```{r}
+library(dplyr)
+library(readr)
+
+
+
+```
+
+```{r}
+my_real_data <- read_csv("~/Desktop/программирование/iris.csv")
+
+glimpse(my_real_data)
+head(my_real_data)
+summary(my_real_data)
+
+```
+Question 1
+Which species has the highest average sepal length?
+ 
+```{r}
+my_real_data %>%
+  group_by(species) %>%
+  summarise(avg_sepal_length = mean(`sepal length (cm)`)) %>%
+  arrange(desc(avg_sepal_length))
+
+```
+
+Question 2
+Select only sepal-related measurements.
+
+```{r}
+my_real_data %>%
+  select(`sepal length (cm)`, `sepal width (cm)`)
+
+```
+
+Question 3
+Filter flowers with petal length greater than 5 cm.
+
+```{r}
+my_real_data %>%
+  filter(`petal length (cm)` > 5) %>%
+  select(species, `petal length (cm)`)
+
+```
+
+Question 4
+Sort the dataset by petal width in descending order.
+
+```{r}
+my_real_data %>%
+  arrange(desc(`petal width (cm)`))
+
+```
+
+Question 5
+Create a new column: sepal_ratio = sepal_length / sepal_width.
+
+```{r}
+my_real_data %>%
+  mutate(sepal_ratio = `sepal length (cm)` / `sepal width (cm)`) %>%
+  select(species, `sepal length (cm)`, `sepal width (cm)`, sepal_ratio)
+
+```
+
+
